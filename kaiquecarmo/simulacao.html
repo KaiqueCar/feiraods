@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulação de cassino · Casa &amp; Chance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="brand">Casa &amp; Chance</a>
+      <nav class="nav-tabs">
+        <a href="index.html">Início</a>
+        <a href="dopamina.html">Como funciona</a>
+        <a href="saude-mental.html">Saúde mental</a>
+        <a href="saude-fisica.html">Saúde física</a>
+        <a href="financeiro.html">Dinheiro &amp; vínculos</a>
+        <a href="simulacao.html" class="active">Simulação</a>
+      </nav>
+      <a href="ajuda.html" class="nav-help">🆘 Ajuda</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <span class="kicker">🎰 Mão na massa</span>
+      <h1>Simulação de cassino</h1>
+      <p>Dinheiro virtual, mesma matemática de qualquer casa de apostas real. A primeira rodada é sempre uma vitória; depois disso, a casa tem 70% de chance de ganhar.</p>
+    </div>
+
+    <div id="game">
+      <div class="game-content">
+        <h2>🎰 GIRE E VEJA A VANTAGEM DA CASA</h2>
+        <p class="game-description">Aposte quantas vezes quiser com o saldo virtual abaixo e observe como o lucro da casa cresce, mesmo com vitórias no meio do caminho.</p>
+
+        <div class="saldo-box">
+          <div class="saldo-label">💰 Seu saldo virtual</div>
+          <div id="saldo">R$ 500,00</div>
+        </div>
+
+        <div class="controles">
+          <label for="valor">Valor da aposta</label>
+          <input type="number" id="valor" value="50" min="1" step="1">
+          <div class="botoes">
+            <button id="btnApostar" onclick="apostar()">🎲 Girar</button>
+          </div>
+        </div>
+
+        <div class="estatisticas">
+          <div class="stat"><span>🎯 Apostas</span><strong id="apostas">0</strong></div>
+          <div class="stat green"><span>🏆 Vitórias</span><strong id="vitorias">0</strong></div>
+          <div class="stat red"><span>💀 Derrotas</span><strong id="derrotas">0</strong></div>
+        </div>
+
+        <div class="status">
+          Lucro da casa: <strong id="lucroCasa">R$ 0,00</strong>
+        </div>
+
+        <div id="resultado"></div>
+
+        <div class="historico">
+          <div class="historico-titulo">📋 Histórico das últimas rodadas</div>
+          <div id="listaHistorico"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>⚡ O que essa simulação mostra?</h2>
+      <p>A primeira rodada é uma vitória garantida — como muitas plataformas fazem para gerar confiança logo de início. A partir daí, a probabilidade de vitória é de apenas <strong>30%</strong>, enquanto a casa vence <strong>70%</strong> das vezes.</p>
+      <p style="margin-top:12px;">Mesmo com vitórias ocasionais no meio do caminho, o saldo tende a zero enquanto a casa acumula lucro — é a mesma matemática por trás de qualquer jogo de apostas real.</p>
+      <h3>Notou o padrão?</h3>
+      <p>Esse mesmo ciclo é descrito com mais detalhe na página <a href="dopamina.html" style="color:var(--amber-bright); font-weight:700;">Como funciona</a>.</p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <a href="ajuda.html" class="footer-help">🆘 Precisa de ajuda com apostas? Clique aqui</a>
+    <p class="footer-note">⚠️ Este site é educativo. A simulação usa dinheiro virtual e não representa uma plataforma de apostas real.</p>
+  </footer>
+
+  <script>
+    let saldo = 500;
+    let apostas = 0;
+    let vitorias = 0;
+    let derrotas = 0;
+    let lucroCasa = 0;
+    let primeiraAposta = true;
+
+    const saldoEl = document.getElementById('saldo');
+    const apostasEl = document.getElementById('apostas');
+    const vitoriasEl = document.getElementById('vitorias');
+    const derrotasEl = document.getElementById('derrotas');
+    const lucroCasaEl = document.getElementById('lucroCasa');
+    const resultadoEl = document.getElementById('resultado');
+    const historicoEl = document.getElementById('listaHistorico');
+    const btnApostar = document.getElementById('btnApostar');
+    const inputValor = document.getElementById('valor');
+
+    function fmt(v) {
+      return 'R$ ' + v.toFixed(2).replace('.', ',');
+    }
+
+    function atualizarUI() {
+      saldoEl.textContent = fmt(saldo);
+      apostasEl.textContent = apostas;
+      vitoriasEl.textContent = vitorias;
+      derrotasEl.textContent = derrotas;
+      lucroCasaEl.textContent = fmt(lucroCasa);
+    }
+
+    function addHistorico(tipo, valor) {
+      const item = document.createElement('div');
+      item.className = 'historico-item';
+      if (tipo === 'vitoria') {
+        item.classList.add('vitoria-item');
+        item.innerHTML = `<span>🎉 Vitória</span><strong class="ganho">+ ${fmt(valor)}</strong>`;
+      } else {
+        item.classList.add('derrota-item');
+        item.innerHTML = `<span>❌ Derrota</span><strong class="perda">- ${fmt(valor)}</strong>`;
+      }
+      historicoEl.prepend(item);
+      while (historicoEl.children.length > 8) {
+        historicoEl.removeChild(historicoEl.lastElementChild);
+      }
+    }
+
+    function criarConfetes() {
+      const emojis = ['🎉', '⭐', '✨', '🎊', '💰', '🪙'];
+      for (let i = 0; i < 24; i++) {
+        const c = document.createElement('span');
+        c.className = 'confete';
+        c.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        c.style.left = Math.random() * 100 + '%';
+        c.style.animationDelay = Math.random() * 0.6 + 's';
+        document.getElementById('game').appendChild(c);
+        setTimeout(() => c.remove(), 2600);
+      }
+    }
+
+    function mostrarVitoria(valor) {
+      resultadoEl.innerHTML = `
+        <div class="vitoria">
+          <div class="titulo-vitoria">Grande vitória!</div>
+          <div class="valor-vitoria">+ ${fmt(valor)}</div>
+          <div class="mensagem-vitoria">A primeira vitória gera confiança. Mas lembre-se: a casa sempre tem vantagem.</div>
+        </div>
+      `;
+      criarConfetes();
+    }
+
+    function mostrarDerrota(valor) {
+      resultadoEl.innerHTML = `
+        <div class="derrota">
+          <div class="titulo-derrota">❌ Perdeu</div>
+          <div class="valor-perda">- ${fmt(valor)}</div>
+          <div class="mensagem-derrota">Tentar recuperar o prejuízo pode levar a perdas ainda maiores.</div>
+        </div>
+      `;
+    }
+
+    function finalizarJogo() {
+      saldo = 0;
+      atualizarUI();
+      resultadoEl.innerHTML = `
+        <div class="fim-jogo">
+          💸 <strong>Fim de jogo</strong>
+          <br>Seu saldo virtual acabou. A casa venceu.
+        </div>
+      `;
+      btnApostar.disabled = true;
+      inputValor.disabled = true;
+    }
+
+    function apostar() {
+      const valor = Number(inputValor.value);
+      if (!Number.isFinite(valor) || valor < 1) {
+        alert('Digite um valor válido (mínimo 1).');
+        return;
+      }
+      if (valor > saldo) {
+        alert('Saldo insuficiente.');
+        return;
+      }
+
+      apostas++;
+      let venceu;
+
+      if (primeiraAposta) {
+        venceu = true;
+        primeiraAposta = false;
+      } else {
+        venceu = Math.random() < 0.30;
+      }
+
+      if (venceu) {
+        saldo += valor;
+        vitorias++;
+        mostrarVitoria(valor);
+        addHistorico('vitoria', valor);
+      } else {
+        saldo -= valor;
+        derrotas++;
+        lucroCasa += valor;
+        mostrarDerrota(valor);
+        addHistorico('derrota', valor);
+      }
+
+      atualizarUI();
+
+      if (saldo <= 0) {
+        finalizarJogo();
+      }
+    }
+
+    inputValor.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') apostar();
+    });
+
+    atualizarUI();
+  </script>
+</body>
+</html>

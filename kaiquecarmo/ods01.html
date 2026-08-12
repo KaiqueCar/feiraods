@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💰 Casa de Apostas · Simulação</title>
+  <!-- Fonte e ícones para dar um ar mais vibrante -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0c0a0a;
+      /* fundo escuro com leve degradê quente */
+      background-image: radial-gradient(circle at 10% 20%, #2a1410 0%, #0c0a0a 80%);
+      color: #f5f2ed;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* CORES VIVAS – vermelho, amarelo, dourado */
+    :root {
+      --red: #e21b2c;
+      --red-dark: #a0101e;
+      --gold: #f5c518;
+      --gold-bright: #ffdd44;
+      --dark-bg: #0f0b0b;
+      --card-bg: #1a1210;
+      --border-glow: rgba(226, 27, 44, 0.5);
+      --text-light: #f0eae6;
+      --muted: #bfaea6;
+    }
+
+    /* HEADER – estilo cassino neon */
+    header {
+      min-height: 460px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 20px 40px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 2px solid var(--red);
+      background: radial-gradient(circle at 30% 0%, #3d1515 0%, #0f0b0b 75%);
+      box-shadow: inset 0 -20px 40px rgba(226, 27, 44, 0.15);
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      width: 800px;
+      height: 300px;
+      bottom: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center, rgba(245, 197, 24, 0.08), transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--red);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      padding: 8px 22px;
+      border-radius: 40px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(226, 27, 44, 0.5);
+    }
+
+    header h1 {
+      font-size: clamp(2.6rem, 8vw, 4.8rem);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      text-shadow: 0 0 30px rgba(226, 27, 44, 0.4);
+    }
+
+    header h1 .highlight {
+      background: linear-gradient(135deg, var(--gold-bright), #f7b32b, var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(245, 197, 24, 0.3);
+    }
+
+    header p {
+      max-width: 680px;
+      margin: 16px auto 0;
+      color: #d4c5bc;
+      font-size: 1.2rem;
+      font-weight: 400;
+      background: rgba(0,0,0,0.25);
+      padding: 14px 24px;
+      border-radius: 60px;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(226, 27, 44, 0.2);
+    }
+
+    /* MAIN */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px 60px;
+    }
+
+    /* CARDS – estilo cassino premium */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid #2e1c18;
+      border-radius: 24px;
+      padding: 32px 30px;
+      margin-bottom: 28px;
+      box-shadow: 0 20px 40px -12px rgba(0,0,0,0.7), 0 0 0 1px rgba(226, 27, 44, 0.1);
+      transition: transform 0.2s ease, border-color 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--red);
+      transform: translateY(-3px);
+      box-shadow: 0 24px 48px -12px rgba(226, 27, 44, 0.2);
+    }
+
+    .card h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #f5e6dd;
+    }
+
+    .card h2 i {
+      color: var(--gold);
+      font-style: normal;
+    }
+
+    .card h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin: 26px 0 10px;
+      color: #f0dace;
+      border-left: 6px solid var(--red);
+      padding-left: 16px;
+    }
+
+    .card p, .card li {
+      color: #d6c5bc;
+      font-weight: 400;
+    }
+
+    .card ul {
+      padding-left: 24px;
+      margin-top: 12px;
+    }
+
+    .card li {
+      margin: 10px 0;
+      list-style-type: '🎰 ';
+    }
+
+    .card li b {
+      color: #fae1d4;
+      font-weight: 700;
+    }
+
+    /* TABELA */
+    .table-wrapper {
+      overflow-x: auto;
+      margin-top: 16px;
+      border-radius: 16px;
+      background: #0f0a08;
+      border: 1px solid #2e1c18;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 480px;
+    }
+
+    th {
+      text-align: left;
+      padding: 16px 18px;
+      background: #1f1310;
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid var(--red);
+    }
+
+    td {
+      padding: 14px 18px;
+      color: #dccfc8;
+      border-bottom: 1px solid #2a1b17;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* JOGO – área principal com fundo cassino */
+    #game {
+      position: relative;
+      overflow: hidden;
+      padding: 40px 28px 48px;
+      margin: 44px 0 36px;
+      text-align: center;
+      border-radius: 32px;
+      background: radial-gradient(circle at 20% 20%, #281613, #0f0b0a 80%);
+      border: 2px solid var(--red);
+      box-shadow: 0 0 40px rgba(226, 27, 44, 0.2), inset 0 0 60px rgba(226, 27, 44, 0.05);
+    }
+
+    #game::before {
+      content: "🎲";
+      position: absolute;
+      font-size: 14rem;
+      opacity: 0.04;
+      right: -30px;
+      bottom: -60px;
+      transform: rotate(15deg);
+      pointer-events: none;
+    }
+
+    .game-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    #game h2 {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--gold);
+      text-shadow: 0 0 30px rgba(245, 197, 24, 0.2);
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+
+    .game-description {
+      max-width: 600px;
+      margin: 0 auto 16px;
+      color: #cfbdb4;
+      font-weight: 400;
+      background: rgba(0,0,0,0.25);
+      padding: 12px 18px;
+      border-radius: 60px;
+      border: 1px solid rgba(226, 27, 44, 0.15);
+    }
+
+    /* SALDO */
+    .saldo-box {
+      margin: 24px auto 18px;
+      padding: 20px 18px;
+      max-width: 420px;
+      border-radius: 40px;
+      background: #0e0908;
+      border: 2px solid var(--gold);
+      box-shadow: 0 0 30px rgba(245, 197, 24, 0.1);
+    }
+
+    .saldo-label {
+      color: #bfa393;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+
+    #saldo {
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--gold-bright);
+      text-shadow: 0 0 30px rgba(245, 197, 24, 0.25);
+      letter-spacing: -1px;
+    }
+
+    /* CONTROLES */
+    .controles {
+      margin-top: 20px;
+    }
+
+    .controles label {
+      display: block;
+      color: #d4bfb5;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 190px;
+      padding: 14px 12px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-align: center;
+      border-radius: 40px;
+      border: 2px solid #3d2822;
+      background: #0d0807;
+      color: #fff;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(245, 197, 24, 0.15);
+    }
+
+    .botoes {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      padding: 14px 36px;
+      border-radius: 60px;
+      font-size: 1.2rem;
+      font-weight: 800;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(135deg, #e21b2c, #b01220);
+      box-shadow: 0 8px 24px rgba(226, 27, 44, 0.4);
+      transition: 0.2s;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 14px 32px rgba(226, 27, 44, 0.5);
+    }
+
+    button:active {
+      transform: scale(0.96);
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      transform: none;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* ESTATÍSTICAS */
+    .estatisticas {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      max-width: 680px;
+      margin: 28px auto 16px;
+    }
+
+    .stat {
+      padding: 14px 6px;
+      border-radius: 40px;
+      background: #140e0c;
+      border: 1px solid #2e1c18;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.4);
+    }
+
+    .stat span {
+      display: block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: #a18b80;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .stat strong {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #f5e6dd;
+    }
+
+    .stat.green strong { color: #2ecc71; }
+    .stat.red strong { color: var(--red); }
+
+    .status {
+      margin: 12px 0 8px;
+      color: #d4c0b6;
+      font-weight: 500;
+    }
+
+    .status strong {
+      color: var(--gold);
+      font-size: 1.3rem;
+      margin-left: 8px;
+    }
+
+    /* RESULTADO */
+    #resultado {
+      min-height: 120px;
+      margin-top: 18px;
+    }
+
+    .vitoria {
+      padding: 24px 16px;
+      border-radius: 40px;
+      background: radial-gradient(circle at 30% 20%, #f5c518, #e6a800);
+      box-shadow: 0 0 50px rgba(245, 197, 24, 0.3);
+      animation: pulseGold 1.2s infinite alternate;
+    }
+
+    @keyframes pulseGold {
+      0% { box-shadow: 0 0 20px rgba(245, 197, 24, 0.2); }
+      100% { box-shadow: 0 0 60px rgba(245, 197, 24, 0.5); }
+    }
+
+    .titulo-vitoria {
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: #1f0f0b;
+      text-shadow: 0 2px 10px rgba(255,215,0,0.3);
+    }
+
+    .valor-vitoria {
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: #0e0806;
+      margin: 6px 0;
+    }
+
+    .mensagem-vitoria {
+      color: #2d1c14;
+      font-weight: 600;
+      background: rgba(0,0,0,0.1);
+      padding: 6px 18px;
+      border-radius: 40px;
+      display: inline-block;
+    }
+
+    .derrota {
+      padding: 24px 16px;
+      border-radius: 40px;
+      background: radial-gradient(circle at 30% 20%, #a0101e, #6b0b14);
+      box-shadow: 0 0 50px rgba(226, 27, 44, 0.2);
+      border: 1px solid #ff3a4a;
+    }
+
+    .titulo-derrota {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #fae1d4;
+    }
+
+    .valor-perda {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #ffb3b3;
+    }
+
+    .mensagem-derrota {
+      color: #f5d6cc;
+      font-weight: 500;
+    }
+
+    .fim-jogo {
+      padding: 30px 16px;
+      border-radius: 60px;
+      background: #1e0b0b;
+      border: 3px solid var(--red);
+      color: #ff6b6b;
+      animation: alertaFinal 1s infinite alternate;
+    }
+
+    @keyframes alertaFinal {
+      0% { box-shadow: 0 0 20px rgba(226, 27, 44, 0.2); }
+      100% { box-shadow: 0 0 50px rgba(226, 27, 44, 0.6); }
+    }
+
+    .fim-jogo strong {
+      display: block;
+      font-size: 2rem;
+      margin-top: 6px;
+      color: #fff;
+    }
+
+    /* HISTÓRICO */
+    .historico {
+      max-width: 680px;
+      margin: 26px auto 0;
+      text-align: left;
+    }
+
+    .historico-titulo {
+      color: #b8a098;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #2e1c18;
+      padding-bottom: 8px;
+    }
+
+    #listaHistorico {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 260px;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    .historico-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 18px;
+      border-radius: 40px;
+      background: #140e0c;
+      border: 1px solid #2a1b17;
+      font-size: 0.95rem;
+    }
+
+    .historico-item.vitoria-item {
+      border-left: 6px solid var(--gold);
+    }
+
+    .historico-item.derrota-item {
+      border-left: 6px solid var(--red);
+    }
+
+    .ganho {
+      color: var(--gold-bright);
+      font-weight: 800;
+    }
+
+    .perda {
+      color: #ff5a5a;
+      font-weight: 800;
+    }
+
+    /* CONFETES */
+    .confete {
+      position: absolute;
+      top: 10%;
+      font-size: 2rem;
+      pointer-events: none;
+      z-index: 20;
+      animation: cairConfete 2.8s linear forwards;
+    }
+
+    @keyframes cairConfete {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(400px) rotate(720deg); opacity: 0; }
+    }
+
+    /* AJUDA */
+    .ajuda-container {
+      text-align: center;
+      max-width: 820px;
+      margin: 50px auto 20px;
+      padding: 40px 28px;
+      border-radius: 40px;
+      background: #1a1210;
+      border: 2px solid var(--red);
+      box-shadow: 0 0 40px rgba(226, 27, 44, 0.1);
+    }
+
+    .ajuda-container h2 {
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: var(--gold);
+    }
+
+    .ajuda-container p {
+      color: #d4c0b6;
+      max-width: 550px;
+      margin: 8px auto 24px;
+      font-size: 1.1rem;
+    }
+
+    .btn-ajuda {
+      display: inline-block;
+      padding: 16px 40px;
+      background: var(--red);
+      color: #fff;
+      font-weight: 800;
+      font-size: 1.3rem;
+      border-radius: 60px;
+      text-decoration: none;
+      transition: 0.2s;
+      box-shadow: 0 8px 30px rgba(226, 27, 44, 0.4);
+    }
+
+    .btn-ajuda:hover {
+      background: #ff2a3a;
+      transform: scale(1.04);
+      box-shadow: 0 12px 40px rgba(226, 27, 44, 0.6);
+    }
+
+    footer {
+      border-top: 2px solid #2e1c18;
+      padding: 30px 20px;
+      text-align: center;
+      color: #8f7a6f;
+      font-size: 0.9rem;
+    }
+
+    /* RESPONSIVO */
+    @media (max-width: 700px) {
+      header h1 { font-size: 2.2rem; }
+      .card { padding: 22px 18px; }
+      #game { padding: 30px 12px; }
+      .estatisticas { grid-template-columns: 1fr; max-width: 300px; }
+      .botoes { flex-direction: column; align-items: center; }
+      button { width: 100%; justify-content: center; }
+      input { width: 100%; max-width: 200px; }
+      .titulo-vitoria { font-size: 2rem; }
+      .valor-vitoria { font-size: 1.8rem; }
+      .saldo-box { max-width: 100%; }
+      .ajuda-container { padding: 30px 16px; }
+      .btn-ajuda { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="badge">🔥 CASA DE APOSTAS · SIMULAÇÃO</div>
+      <h1>O <span class="highlight">jogo</span> que nunca perde</h1>
+      <p>Entenda como a vantagem matemática da casa transforma vitórias ocasionais em lucro garantido no longo prazo.</p>
+    </div>
+  </header>
+
+  <main>
+    <!-- CARDS educativos com cores vivas -->
+    <div class="card">
+      <h2><i>🎲</i> O gatilho da dopamina</h2>
+      <p>O sistema de recompensa intermitente é o motor do vício. Cada aposta gera uma descarga de expectativa, e a vitória inesperada ativa o circuito de prazer com ainda mais força.</p>
+      <h3>🧠 Recompensa imprevisível</h3>
+      <p>Vitórias aleatórias e espaçadas mantêm o cérebro em alerta, criando um ciclo de repetição difícil de quebrar.</p>
+      <h3>🎯 Ilusão de controle</h3>
+      <p>Padrões imaginários e "estratégias" dão a falsa sensação de que é possível prever o acaso.</p>
+    </div>
+
+    <div class="card">
+      <h2><i>🧠</i> Riscos à saúde mental</h2>
+      <ul>
+        <li><b>Ansiedade e irritabilidade:</b> a expectativa constante desgasta o sistema nervoso.</li>
+        <li><b>Depressão e desesperança:</b> perdas financeiras e culpa geram um ciclo de sofrimento.</li>
+        <li><b>Isolamento social:</b> o jogador se afasta de familiares e amigos.</li>
+        <li><b>Perda de foco:</b> a aposta ocupa o centro da vida, prejudicando trabalho e estudos.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2><i>❤️</i> Riscos à saúde física</h2>
+      <div class="table-wrapper">
+        <table>
+          <tr><th>Área afetada</th><th>Possíveis consequências</th></tr>
+          <tr><td>😴 Sono</td><td>Insônia, noites em claro, cansaço crônico.</td></tr>
+          <tr><td>❤️ Cardiovascular</td><td>Picos de estresse, pressão alta, taquicardia.</td></tr>
+          <tr><td>💪 Corpo</td><td>Tensão muscular, dores de cabeça, fadiga.</td></tr>
+          <tr><td>🍔 Alimentação</td><td>Pular refeições, compulsão alimentar ou jejum.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><i>💰</i> Danos financeiros e sociais</h2>
+      <ul>
+        <li><b>Endividamento:</b> empréstimos e cartões para cobrir perdas.</li>
+        <li><b>Conflitos familiares:</b> mentiras, quebra de confiança e afastamento.</li>
+        <li><b>Ruptura de relacionamentos:</b> isolamento de parceiros e amigos.</li>
+        <li><b>Perda de patrimônio:</b> venda de bens para tentar recuperar prejuízos.</li>
+      </ul>
+    </div>
+
+    <!-- JOGO EDUCATIVO -->
+    <div id="game">
+      <div class="game-content">
+        <h2>🎰 SIMULAÇÃO DE CASSINO</h2>
+        <p class="game-description">A primeira rodada é sempre uma vitória — um gatilho clássico. Depois, a casa tem 70% de chance de ganhar.</p>
+
+        <div class="saldo-box">
+          <div class="saldo-label">💰 SEU SALDO VIRTUAL</div>
+          <div id="saldo">R$ 500,00</div>
+        </div>
+
+        <div class="controles">
+          <label for="valor">Valor da aposta</label>
+          <input type="number" id="valor" value="50" min="1" step="1">
+          <div class="botoes">
+            <button id="btnApostar" onclick="apostar()">🎲 GIRAR</button>
+          </div>
+        </div>
+
+        <div class="estatisticas">
+          <div class="stat"><span>🎯 Apostas</span><strong id="apostas">0</strong></div>
+          <div class="stat green"><span>🏆 Vitórias</span><strong id="vitorias">0</strong></div>
+          <div class="stat red"><span>💀 Derrotas</span><strong id="derrotas">0</strong></div>
+        </div>
+
+        <div class="status">
+          Lucro da casa: <strong id="lucroCasa">R$ 0,00</strong>
+        </div>
+
+        <div id="resultado"></div>
+
+        <div class="historico">
+          <div class="historico-titulo">📋 HISTÓRICO DAS ÚLTIMAS RODADAS</div>
+          <div id="listaHistorico"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPLICAÇÃO -->
+    <div class="card">
+      <h2><i>⚡</i> O que a simulação mostra?</h2>
+      <p>A primeira rodada é uma vitória garantida — como muitas plataformas fazem para gerar confiança. A partir daí, a probabilidade de vitória é de apenas <strong>30%</strong>, enquanto a casa vence <strong>70%</strong> das vezes. Mesmo com vitórias ocasionais, o saldo tende a zero e a casa acumula lucro.</p>
+      <p style="margin-top:12px;">🔴 <b>Isso é uma demonstração:</b> o objetivo é mostrar, na prática, como a vantagem da casa funciona.</p>
+    </div>
+
+    <!-- AJUDA -->
+    <div class="card">
+      <h2><i>🆘</i> Onde buscar ajuda?</h2>
+      <p>Se as apostas estão afetando sua vida, saúde ou finanças, procure apoio profissional. Você não está sozinho.</p>
+      <ul>
+        <li><b>🎗 Jogadores Anônimos (JA)</b> – grupos de apoio mútuo</li>
+        <li><b>🧠 Terapia Cognitivo-Comportamental (TCC)</b> – abordagem eficaz</li>
+        <li><b>🏥 Atendimento psicológico e psiquiátrico</b></li>
+      </ul>
+    </div>
+
+    <div class="ajuda-container">
+      <h2>🆘 PRECISA DE AJUDA?</h2>
+      <p>Se você ou alguém próximo está sofrendo com apostas, procure ajuda. A recuperação é possível.</p>
+      <a href="https://jogadoresanonimos.org.br/" target="_blank" rel="noopener" class="btn-ajuda">📞 PEDIR AJUDA</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>⚠️ Este site é educativo. A simulação usa dinheiro virtual e não representa uma plataforma de apostas real.</p>
+  </footer>
+
+  <script>
+    // ========== JOGO ==========
+    let saldo = 300;
+    let apostas = 0;
+    let vitorias = 0;
+    let derrotas = 0;
+    let lucroCasa = 0;
+    let primeiraAposta = true;
+
+    const saldoEl = document.getElementById('saldo');
+    const apostasEl = document.getElementById('apostas');
+    const vitoriasEl = document.getElementById('vitorias');
+    const derrotasEl = document.getElementById('derrotas');
+    const lucroCasaEl = document.getElementById('lucroCasa');
+    const resultadoEl = document.getElementById('resultado');
+    const historicoEl = document.getElementById('listaHistorico');
+    const btnApostar = document.getElementById('btnApostar');
+    const inputValor = document.getElementById('valor');
+
+    function fmt(v) {
+      return 'R$ ' + v.toFixed(2).replace('.', ',');
+    }
+
+    function atualizarUI() {
+      saldoEl.textContent = fmt(saldo);
+      apostasEl.textContent = apostas;
+      vitoriasEl.textContent = vitorias;
+      derrotasEl.textContent = derrotas;
+      lucroCasaEl.textContent = fmt(lucroCasa);
+    }
+
+    function addHistorico(tipo, valor) {
+      const item = document.createElement('div');
+      item.className = 'historico-item';
+      if (tipo === 'vitoria') {
+        item.classList.add('vitoria-item');
+        item.innerHTML = `<span>🎉 Vitória</span><strong class="ganho">+ ${fmt(valor)}</strong>`;
+      } else {
+        item.classList.add('derrota-item');
+        item.innerHTML = `<span>❌ Derrota</span><strong class="perda">- ${fmt(valor)}</strong>`;
+      }
+      historicoEl.prepend(item);
+      while (historicoEl.children.length > 8) {
+        historicoEl.removeChild(historicoEl.lastElementChild);
+      }
+    }
+
+    function criarConfetes() {
+      const emojis = ['🎉', '⭐', '✨', '🎊', '💰', '🪙'];
+      for (let i = 0; i < 24; i++) {
+        const c = document.createElement('span');
+        c.className = 'confete';
+        c.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        c.style.left = Math.random() * 100 + '%';
+        c.style.animationDelay = Math.random() * 0.6 + 's';
+        document.getElementById('game').appendChild(c);
+        setTimeout(() => c.remove(), 2800);
+      }
+    }
+
+    function mostrarVitoria(valor) {
+      resultadoEl.innerHTML = `
+        <div class="vitoria">
+          <div>🎊 🎰 ✨ 🎰 🎊</div>
+          <div class="titulo-vitoria">GRANDE VITÓRIA!</div>
+          <div class="valor-vitoria">+ ${fmt(valor)}</div>
+          <div class="mensagem-vitoria">A primeira vitória gera confiança. Mas lembre-se: a casa sempre tem vantagem.</div>
+        </div>
+      `;
+      criarConfetes();
+    }
+
+    function mostrarDerrota(valor) {
+      resultadoEl.innerHTML = `
+        <div class="derrota">
+          <div class="titulo-derrota">❌ PERDEU</div>
+          <div class="valor-perda">- ${fmt(valor)}</div>
+          <div class="mensagem-derrota">Tentar recuperar o prejuízo pode levar a perdas ainda maiores.</div>
+        </div>
+      `;
+    }
+
+    function finalizarJogo() {
+      saldo = 0;
+      atualizarUI();
+      resultadoEl.innerHTML = `
+        <div class="fim-jogo">
+          💸 <strong>FIM DE JOGO</strong>
+          <br>Seu saldo virtual acabou. A casa venceu.
+        </div>
+      `;
+      btnApostar.disabled = true;
+      inputValor.disabled = true;
+    }
+
+    function apostar() {
+      const valor = Number(inputValor.value);
+      if (!Number.isFinite(valor) || valor < 1) {
+        alert('Digite um valor válido (mínimo 1).');
+        return;
+      }
+      if (valor > saldo) {
+        alert('Saldo insuficiente.');
+        return;
+      }
+
+      apostas++;
+      let venceu;
+
+      // Primeira aposta sempre vitória (gatilho)
+      if (primeiraAposta) {
+        venceu = true;
+        primeiraAposta = false;
+      } else {
+        venceu = Math.random() < 0.30; // 30% de vitória
+      }
+
+      if (venceu) {
+        saldo += valor;
+        vitorias++;
+        mostrarVitoria(valor);
+        addHistorico('vitoria', valor);
+      } else {
+        saldo -= valor;
+        derrotas++;
+        lucroCasa += valor;
+        mostrarDerrota(valor);
+        addHistorico('derrota', valor);
+      }
+
+      atualizarUI();
+
+      if (saldo <= 0) {
+        finalizarJogo();
+      }
+    }
+
+    // Enter no campo
+    inputValor.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') apostar();
+    });
+
+    atualizarUI();
+  </script>
+</body>
+</html>
